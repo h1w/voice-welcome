@@ -64,7 +64,6 @@ with sd.RawInputStream(samplerate=fs, blocksize=blocksize, dtype=dtype, channels
             if ps_thread == None or not ps_thread.is_alive():
                 ps_thread = threading.Thread(target=playingsound, args=(result, ))
                 ps_thread.start()
-            
-            
+
         else:
             print('PART', json.loads(rec.PartialResult())["partial"])
