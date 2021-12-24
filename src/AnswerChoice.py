@@ -19,12 +19,14 @@ class AnswerChoice:
     
     def FindAnswer(self):
         answer = None
-        for key, value in self.answers.items():
-            if Levenshtein.ratio(key.lower(), self.text.lower()) > 0.7:
-                answer = random.choice(value)
+        for keys, value in self.answers.items():
+            ok = False
+            for key in keys.split(','):
+                if Levenshtein.ratio(key.lower().strip(' '), self.text.lower()) > 0.7:
+                    answer = random.choice(value)
+                    ok = True
+                    break
+            if ok == True:
+                break
         
         return answer
-
-ac = AnswerChoice('Плотно и позавтракал')
-b = ac.FindAnswer()
-print(b)

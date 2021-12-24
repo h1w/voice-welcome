@@ -9,10 +9,11 @@ import json
 from PlaySound import PlaySound
 from AnswerChoice import AnswerChoice
 import threading
+import Levenshtein
 
 q = queue.Queue()
 
-MODEL_NAME = 'vosk-model-ru-0.22'
+MODEL_NAME = 'vosk-model-small-ru-0.22'
 
 model = Model(os.path.normpath(os.path.join(MODELS_DIR, MODEL_NAME)))
 
@@ -22,6 +23,7 @@ blocksize = 8000
 dtype = 'int16'
 channels = 1
 
+ps_thread = None
 lock = threading.Lock()
 
 outfile_abspath = os.path.normpath(os.path.join(TEMP_DIR, 'output.wav'))
@@ -51,7 +53,18 @@ with sd.RawInputStream(samplerate=fs, blocksize=blocksize, dtype=dtype, channels
         if rec.AcceptWaveform(data):
             result = json.loads(rec.Result())['text']
             print('RES', result)
-            ps_thread = threading.Thread(target=playingsound, args=(result, ))
-            ps_thread.start()
+
+            # Check on stop words
+            # stop_words = ['прекрати', 'стой', 'стоп', 'остановись']
+            # for stop_word in stop_words:
+            #     if Levenshtein.ratio(result, stop_word) > 0.7:
+            #         # ps_thread.do_run = False
+            #         pass # Kill the thread
+
+            if ps_thread == None or not ps_thread.is_alive():
+                ps_thread = threading.Thread(target=playingsound, args=(result, ))
+                ps_thread.start()
+            
+            
         else:
             print('PART', json.loads(rec.PartialResult())["partial"])
