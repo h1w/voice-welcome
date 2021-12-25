@@ -10,6 +10,7 @@ from TextToSpeech import TextToSpeech_gTTS
 from PlaySound import PlaySound
 from AnswerChoice import AnswerChoice
 import threading
+import AssistantFunctions as AF
 
 MODEL_NAME = 'vosk-model-small-ru-0.22'
 
@@ -43,6 +44,15 @@ class VoiceRecognition:
             if result != "":
                 answerchoice = AnswerChoice(result)
                 answer = answerchoice.FindAnswer()
+
+                # Проверить, подразумевается ли, что ответ должен быть через функцию { FUNC:функция} 
+                if ('FUNC:' in answer):
+                    afunc = answer.split(':')[1]
+                    if afunc == "GetTime":
+                        answer = AF.GetTime()
+                    elif afunc == "GetData":
+                        answer = AF.GetData()
+
                 if answer != None:
                     texttospeech = TextToSpeech_gTTS()
                     texttospeech.gTTS(answer, self.outfile_abspath)
