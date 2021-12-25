@@ -1,4 +1,4 @@
-from settings import MODELS_DIR, TEMP_DIR
+from settings import MODELS_DIR, TEMP_DIR, HEADERS
 import os
 from vosk import Model, KaldiRecognizer
 import sys
@@ -11,6 +11,9 @@ from PlaySound import PlaySound
 from AnswerChoice import AnswerChoice
 import threading
 import AssistantFunctions as AF
+import urllib.request
+import time
+import Levenshtein
 
 MODEL_NAME = 'vosk-model-small-ru-0.22'
 
@@ -34,6 +37,11 @@ class VoiceRecognition:
         self.recognizer = sr.Recognizer()
         self.microphone = sr.Microphone()
 
+        # Assistant mode
+        # 1 - Обычный режим
+        # 2 - Режим балабобы
+        self.assistant_mode = 1
+
     def callback(self, indata, frames, time, status):
         if status:
             print(status, file=sys.stderr)
@@ -42,8 +50,32 @@ class VoiceRecognition:
     def playingsound(self, result):
         with self.lock:
             if result != "":
-                answerchoice = AnswerChoice(result)
-                answer = answerchoice.FindAnswer()
+                answer = ""
+                # Если режим ассистента не стандартный
+                if self.assistant_mode == 2:
+                    if Levenshtein.ratio(result, 'хватит болтать') > 0.7:
+                        self.assistant_mode = 1
+                        answer = "Включен стандартный режим. Чтобы со мной поговорить, скажите: давай поболтаем"
+                    else:
+                        payload = json.dumps({
+                            "query": result,
+                            "intro": 4,
+                            "filter": 0
+                        }, ensure_ascii=False)
+                        req = urllib.request.Request(
+                            "https://zeapi.yandex.net/lab/api/yalm/text3",
+                            data=payload.encode('utf8'),
+                            headers=HEADERS
+                        )
+                        resp = urllib.request.urlopen(req)
+                        jsn = json.loads(resp.read().decode('utf8'))
+                        answer = jsn['text']
+
+                # Если режим ассистента стандартный
+                answerchoice = ""
+                if self.assistant_mode == 1:
+                    answerchoice = AnswerChoice(result)
+                    answer = answerchoice.FindAnswer()
 
                 # Проверить, подразумевается ли, что ответ должен быть через функцию { FUNC:функция} 
                 if ('FUNC:' in answer):
@@ -56,6 +88,16 @@ class VoiceRecognition:
                         answer = AF.GetData()
                     elif afunc == "WhatDay":
                         answer = AF.GetData()
+                
+                # Сменить режим
+                if ('MODE:' in answer):
+                    afunc = answer.split(':')[1]
+                    if (afunc == "balaboba"):
+                        answer = "Включен режим БАЛАБОБЫ. Если хотите прекратить, скажите: хватит болтать"
+                        self.assistant_mode = 2
+                    elif (afunc == "default"):
+                        answer = "Включен стандартный режим. Чтобы со мной поговорить, скажите: давай поболтаем"
+                        self.assistant_mode = 1
 
                 if answer != None:
                     texttospeech = TextToSpeech_gTTS()
@@ -63,6 +105,7 @@ class VoiceRecognition:
                     
                     playsound = PlaySound(self.outfile_abspath)
                     playsound.play()
+            time.sleep(2)
     
     def recognitionFromMic_Vosk(self):
         with sd.RawInputStream(samplerate=self.fs, blocksize=self.blocksize, dtype=self.dtype, channels=self.channels, callback=self.callback):

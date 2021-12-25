@@ -21,3 +21,12 @@ config.sections()
 #     'OATH_TOKEN': config['Yandex']['OATH_TOKEN'],
 #     'FOLDER_ID': config['Yandex']['FOLDER_ID']
 # }
+
+# For balaboba
+HEADERS = {
+    'Content-Type': 'application/json',
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 11_4) AppleWebKit/605.1.15 '
+                  '(KHTML, like Gecko) Version/14.1.1 Safari/605.1.15',
+    'Origin': 'https://yandex.ru',
+    'Referer': 'https://yandex.ru/',
+}
