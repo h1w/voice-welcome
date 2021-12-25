@@ -52,6 +52,10 @@ class VoiceRecognition:
                         answer = AF.GetTime()
                     elif afunc == "GetData":
                         answer = AF.GetData()
+                    elif afunc == "GetFullDataTime":
+                        answer = AF.GetData()
+                    elif afunc == "WhatDay":
+                        answer = AF.GetData()
 
                 if answer != None:
                     texttospeech = TextToSpeech_gTTS()
