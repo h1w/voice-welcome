@@ -1,12 +1,22 @@
 import requests
 import os
-from settings import TEMP_DIR, yandex
+from settings import TEMP_DIR
 from utils import ConvertPcmToWav
+import gtts
 
-class TextToSpeech:
+class TextToSpeech_gTTS:
+    def __init_(self):
+        pass
+    
+    def gTTS(self, text, output_name):
+        tts = gtts.gTTS(text, lang='ru', slow=False)
+        tts.save(output_name)
+
+
+class TextToSpeech_Yandex:
     def __init__(self, text, output_name):
-        self.OATH_TOKEN = yandex['OATH_TOKEN']
-        self.FOLDER_ID = yandex['FOLDER_ID']
+        self.OATH_TOKEN = "" # yandex['OATH_TOKEN']
+        self.FOLDER_ID = "" # yandex['FOLDER_ID']
         self.IAM_TOKEN = self.getIAMToken()
         self.text = text
         self.name = 'output.pcm'

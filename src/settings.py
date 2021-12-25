@@ -17,9 +17,7 @@ config.read(os.path.normpath(os.path.join(CONFIG_DIR, 'settings.conf')))
 config.sections()
 
 # Get Yandex secret data from config file (or env if linux)
-
-
-yandex = {
-    'OATH_TOKEN': config['Yandex']['OATH_TOKEN'],
-    'FOLDER_ID': config['Yandex']['FOLDER_ID']
-}
+# yandex = {
+#     'OATH_TOKEN': config['Yandex']['OATH_TOKEN'],
+#     'FOLDER_ID': config['Yandex']['FOLDER_ID']
+# }
