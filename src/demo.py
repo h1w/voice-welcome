@@ -6,7 +6,6 @@ import os
 import json
 from random import choice
 from PlaySound import PlaySound
-import time
 
 # Import messages from messages.json
 messages_filepath = os.path.normpath(os.path.join(CONFIG_DIR, 'messages.json'))
