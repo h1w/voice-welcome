@@ -9,7 +9,7 @@ from PlaySound import PlaySound
 
 def play_welcome_message():
     welcome_msg = choice(messages_json['Welcome'])
-    msg_filepath = os.path.normpath(os.path.join(TEMP_DIR, 'welcome_message.wav'))
+    msg_filepath = os.path.normpath(os.path.join(TEMP_DIR, 'welcome_message.mp3'))
     gtts = TextToSpeech_gTTS()
     gtts.gTTS(welcome_msg, msg_filepath) # Текст в речь
     play_sound = PlaySound(msg_filepath)

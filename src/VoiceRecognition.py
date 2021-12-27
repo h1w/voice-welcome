@@ -31,7 +31,7 @@ class VoiceRecognition:
         self.ps_thread = None
         self.lock = threading.Lock()
 
-        self.outfile_abspath = os.path.normpath(os.path.join(TEMP_DIR, 'output.wav'))
+        self.outfile_abspath = os.path.normpath(os.path.join(TEMP_DIR, 'output.mp3'))
 
         # for speech_recognition
         self.recognizer = sr.Recognizer()
