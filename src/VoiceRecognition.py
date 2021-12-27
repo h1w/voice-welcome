@@ -76,6 +76,9 @@ class VoiceRecognition:
                 if self.assistant_mode == 1:
                     answerchoice = AnswerChoice(result)
                     answer = answerchoice.FindAnswer()
+                
+                if answer == None:
+                    answer = "Извините, не смогла подобрать для вас ответ, попробуйте сформулировать фразу по-другому."
 
                 # Проверить, подразумевается ли, что ответ должен быть через функцию { FUNC:функция} 
                 if ('FUNC:' in answer):
@@ -99,12 +102,11 @@ class VoiceRecognition:
                         answer = "Включен стандартный режим. Чтобы со мной поговорить, скажите: давай поболтаем"
                         self.assistant_mode = 1
 
-                if answer != None:
-                    texttospeech = TextToSpeech_gTTS()
-                    texttospeech.gTTS(answer, self.outfile_abspath)
-                    
-                    playsound = PlaySound(self.outfile_abspath)
-                    playsound.play()
+                texttospeech = TextToSpeech_gTTS()
+                playsound = PlaySound(self.outfile_abspath)                    
+                texttospeech.gTTS(answer, self.outfile_abspath)                    
+                playsound.play()
+
             time.sleep(2)
     
     def recognitionFromMic_Vosk(self):
