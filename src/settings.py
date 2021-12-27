@@ -1,5 +1,6 @@
 import os
 import configparser
+import json
 
 SRC_DIR = os.path.normpath(os.path.dirname(os.path.abspath(__file__)))
 
@@ -30,3 +31,8 @@ HEADERS = {
     'Origin': 'https://yandex.ru',
     'Referer': 'https://yandex.ru/',
 }
+
+# Import messages from messages.json
+messages_filepath = os.path.normpath(os.path.join(CONFIG_DIR, 'messages.json'))
+with open(messages_filepath, 'r', encoding='utf-8') as mj:
+    messages_json = json.load(mj)
